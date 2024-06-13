@@ -5,10 +5,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 import { useState } from "react";
+import signInWithGoogle from "@/firebase/auth/signInWithGoogle";
 
 function Page(): JSX.Element {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const router = useRouter();
 
   // Handle form submission
@@ -25,11 +26,29 @@ function Page(): JSX.Element {
     }
 
     // Redirect to the admin page
-    // Typically you would want to redirect them to a protected page an add a check to see if they are admin or 
+    // Typically you would want to redirect them to a protected page an add a check to see if they are admin or
     // create a new page for admin
     router.push("/admin/dashboard");
-  }
-  
+  };
+
+  const handleSignInWithGoogle = async (event: {
+    preventDefault: () => void;
+  }) => {
+    event.preventDefault();
+
+    // Attempt to sign up with provided Google
+    const { result, error } = await signInWithGoogle();
+
+    if (error) {
+      // Display and log any sign-up errors
+      console.log(error);
+      return;
+    }
+
+    // Redirect to the admin page
+    router.push("/admin/dashboard");
+  };
+
   return (
     <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
       <Link
@@ -62,7 +81,7 @@ function Page(): JSX.Element {
                 className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="name@company.com"
                 value={email}
-                onChange={e => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
@@ -80,7 +99,7 @@ function Page(): JSX.Element {
                 placeholder="••••••••"
                 className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 value={password}
-                onChange={e => setPassword(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </div>
@@ -104,7 +123,10 @@ function Page(): JSX.Element {
               or
             </span>
           </div>
-          <button className="w-full flext items-center text-black bg-transparent hover:bg-gray-100 border border-gray-300 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+          <button
+            onClick={handleSignInWithGoogle}
+            className="w-full flext items-center text-black bg-transparent hover:bg-gray-100 border border-gray-300 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+          >
             <GoogleIcon /> Continue with Google
           </button>
           <p className="text-sm font-light text-gray-500 dark:text-gray-400">

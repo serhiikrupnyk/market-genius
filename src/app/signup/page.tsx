@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 import { useState } from "react";
+import signUpWithGoogle from "@/firebase/auth/signUpWithGoogle";
 
 function Page(): JSX.Element {
   const [firstName, setFirstName] = useState("");
@@ -23,6 +24,22 @@ function Page(): JSX.Element {
       email,
       password
     );
+
+    if (error) {
+      // Display and log any sign-up errors
+      console.log(error);
+      return;
+    }
+
+    // Redirect to the admin page
+    router.push("/admin/dashboard");
+  };
+
+  const handleSignUpWithGoogle = async (event: { preventDefault: () => void }) => {
+    event.preventDefault();
+
+    // Attempt to sign up with provided Google
+    const { result, error } = await signUpWithGoogle();
 
     if (error) {
       // Display and log any sign-up errors
@@ -139,6 +156,7 @@ function Page(): JSX.Element {
             </span>
           </div>
           <button
+            onClick={handleSignUpWithGoogle}
             className="w-full flext items-center text-black bg-transparent hover:bg-gray-100 border border-gray-300 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
           >
             <GoogleIcon /> Sign up with Google
