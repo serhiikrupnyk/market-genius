@@ -8,7 +8,7 @@ import {
 } from "react";
 import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 import firebase_app from "@/firebase/config";
-import LoadSpinner from "@/components/LoadSpinner";
+import LoadSpinner from "@/components/UI/LoadSpinner";
 import { usePathname, useRouter } from "next/navigation";
 
 type AuthContextType = {
@@ -48,17 +48,6 @@ export function AuthContextProvider({
 
     return () => unsubscribe();
   }, []);
-
-  useEffect(() => {
-    if (
-      user === null &&
-      !pathname.includes("/signin") &&
-      !pathname.includes("/signup") &&
-      !pathname.includes("/forgot-password")
-    ) {
-      router.push("/signin");
-    }
-  }, [user, router]);
 
   return (
     <AuthContext.Provider value={{ user }}>
