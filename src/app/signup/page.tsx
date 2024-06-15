@@ -2,12 +2,19 @@
 import signUp from "@/firebase/auth/signup";
 import { GoogleIcon } from "@/icons/svgIcons";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import * as React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import signUpWithGoogle from "@/firebase/auth/signUpWithGoogle";
+import useUserData from "@/hooks/useUserData";
 
 function Page(): JSX.Element {
+  const { user, userData } = useUserData();
+  useEffect(() => {
+    if (user) {
+      redirect("/admin/dashboard");
+    }
+  }, []);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -35,7 +42,9 @@ function Page(): JSX.Element {
     router.push("/admin/dashboard");
   };
 
-  const handleSignUpWithGoogle = async (event: { preventDefault: () => void }) => {
+  const handleSignUpWithGoogle = async (event: {
+    preventDefault: () => void;
+  }) => {
     event.preventDefault();
 
     // Attempt to sign up with provided Google
