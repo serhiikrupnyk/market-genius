@@ -1,11 +1,18 @@
 "use client";
 import sendPasswordReset from "@/firebase/auth/sendResetPasswordEmail";
+import useUserData from "@/hooks/useUserData";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import * as React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function Page(): JSX.Element {
+  const { user, userData } = useUserData();
+  useEffect(() => {
+    if (user) {
+      redirect("/admin/dashboard");
+    }
+  }, []);
   const [email, setEmail] = useState("");
   const router = useRouter();
 
@@ -40,7 +47,7 @@ function Page(): JSX.Element {
               </label>
               <input
                 value={email}
-                onChange={e => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
                 type="email"
                 name="email"
                 id="email"

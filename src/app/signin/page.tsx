@@ -2,12 +2,19 @@
 import signIn from "@/firebase/auth/signIn";
 import { GoogleIcon } from "@/icons/svgIcons";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import * as React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import signInWithGoogle from "@/firebase/auth/signInWithGoogle";
+import useUserData from "@/hooks/useUserData";
 
 function Page(): JSX.Element {
+  const { user, userData } = useUserData();
+  useEffect(() => {
+    if (user) {
+      redirect("/admin/dashboard");
+    }
+  }, []);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();

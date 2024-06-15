@@ -11,14 +11,24 @@ import useUserData from "@/hooks/useUserData";
 import { logout } from "@/firebase/auth/signOut";
 import { DEFAULT_AVATAR_URL } from "@/utils/constants/insex";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { redirect, usePathname, useRouter } from "next/navigation";
 
 export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  useEffect(() => {
+
+  }, [])
   const { user, userData } = useUserData();
+
+  useEffect(() => {
+    if(!user) {
+      redirect("/signin")
+    }
+  }, [])
+
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -42,6 +52,7 @@ export default function AuthLayout({
 
   const handleSignOut = async () => {
     await logout();
+    router.push("/signin");
   };
 
   useEffect(() => {
@@ -115,13 +126,12 @@ export default function AuthLayout({
                       </li>
                     </ul>
                     <div className="py-2">
-                      <a
+                      <p
                         onClick={handleSignOut}
-                        href="#"
-                        className="block px-4 py-2 text-sm hover:font-bold text-gray-700 hover:bg-indigo-200 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                        className="block px-4 py-2 text-sm hover:font-bold cursor-pointer text-gray-700 hover:bg-indigo-200 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                       >
                         <LogoutIcon /> Sign out
-                      </a>
+                      </p>
                     </div>
                   </div>
                 </Menu>
