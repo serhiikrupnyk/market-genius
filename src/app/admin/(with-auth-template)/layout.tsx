@@ -101,12 +101,13 @@ export default function AuthLayout({
                       aria-labelledby="dropdownInformationButton"
                     >
                       <li>
-                        <a
-                          href="#"
+                        <Link
+                          onClick={() => setMenuOpen(false)}
+                          href="/admin/profile"
                           className="block px-4 py-2 hover:font-bold hover:bg-indigo-200 dark:hover:bg-gray-600 dark:hover:text-white"
                         >
                           <PersonIcon /> Profile
-                        </a>
+                        </Link>
                       </li>
                       <li>
                         <a
@@ -162,7 +163,7 @@ export default function AuthLayout({
                         className={
                           pathname.includes("/admin/dashboard")
                             ? "w-5 h-5 text-gray-500 transition duration-75 text-primary-900 group-hover:text-primary-900"
-                            : "flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-primary-100 dark:hover:bg-gray-700 group"
+                            : "w-5 h-5 flex items-center text-gray-900 rounded-lg dark:text-white hover:bg-primary-100 dark:hover:bg-gray-700 group"
                         }
                         aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg"
@@ -180,7 +181,7 @@ export default function AuthLayout({
             </div>
           </div>
         </aside>
-        <div>{children}</div>
+        <div className="w-full">{children}</div>
       </div>
     </div>
   );
