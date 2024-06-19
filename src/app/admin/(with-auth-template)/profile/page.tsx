@@ -3,9 +3,10 @@ import useUserData from "@/hooks/useUserData";
 import { redirect } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import styles from "./index.module.scss";
-import { DEFAULT_AVATAR_URL } from "@/utils/constants/insex";
+import { DEFAULT_AVATAR_URL } from "@/utils/constants";
 import { getAvatarFilePreviewUrl, uploadFile } from "@/utils/user/userData";
 import { setUser, storage } from "@/utils/user";
+import toast, { Toaster } from "react-hot-toast";
 
 function Page(): JSX.Element {
   const { user, userData } = useUserData();
@@ -53,6 +54,7 @@ function Page(): JSX.Element {
   };
 
   const saveUserAvatar = async () => {
+    const notification = toast.loading("Loading...");
     try {
       if (avatarFile && user) {
         const url = await uploadFile(
@@ -61,26 +63,39 @@ function Page(): JSX.Element {
           avatarFile
         );
         await setUser(user.uid, { avatarUrl: url });
+        toast.success("User avatar updated successfuly!", {
+          id: notification,
+        });
         discardAvatarFile();
       }
     } catch (error) {
+      toast.error("Error saving user avatar!", {
+        id: notification,
+      });
       console.error("Error saving user avatar:", error);
     }
   };
 
   const saveUserInfo = async () => {
+    const notification = toast.loading("Loading...");
     if (user) {
       try {
         const newUserData = {
-          firstName: firstName,
-          lastName: lastName,
-          email: email,
-          phoneNumber: phoneNumber,
+          firstName,
+          lastName,
+          email,
+          phoneNumber,
         };
 
-        await setUser(user?.uid, newUserData);
+        await setUser(user.uid, newUserData);
+        toast.success("User info updated successfuly!", {
+          id: notification,
+        });
         setIsChanged(false);
       } catch (error) {
+        toast.error("Whoops, something went wrong!", {
+          id: notification,
+        });
         console.error("Error saving user info:", error);
       }
     }
@@ -105,6 +120,7 @@ function Page(): JSX.Element {
   return (
     <div className={styles.slot_mar + " mt-5 h-screen"}>
       <div className="pl-5 pr-5">
+      <Toaster position="top-right" />
         <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-4xl dark:text-white">
           Profile
         </h1>
