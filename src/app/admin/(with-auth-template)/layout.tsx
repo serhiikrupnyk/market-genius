@@ -9,7 +9,7 @@ import {
 } from "@/icons/svgIcons";
 import useUserData from "@/hooks/useUserData";
 import { logout } from "@/firebase/auth/signOut";
-import { DEFAULT_AVATAR_URL } from "@/utils/constants/insex";
+import { DEFAULT_AVATAR_URL } from "@/utils/constants";
 import Link from "next/link";
 import { redirect, usePathname, useRouter } from "next/navigation";
 
