@@ -7,6 +7,12 @@ import { DEFAULT_AVATAR_URL } from "@/utils/constants";
 import { getAvatarFilePreviewUrl, uploadFile } from "@/utils/user/userData";
 import { setUser, storage } from "@/utils/user";
 import toast, { Toaster } from "react-hot-toast";
+import {
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  updatePassword,
+} from "firebase/auth";
+import { error } from "console";
 
 function Page(): JSX.Element {
   const { user, userData } = useUserData();
@@ -25,6 +31,9 @@ function Page(): JSX.Element {
   const [lastName, setLastName] = useState(userData?.lastName || "");
   const [email, setEmail] = useState(userData?.email || "");
   const [phoneNumber, setPhoneNumber] = useState(userData?.phoneNumber || "");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
   const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files[0];
@@ -108,6 +117,38 @@ function Page(): JSX.Element {
       setIsChanged(true);
     };
 
+  const saveNewPassword = async () => {
+    if (user) {
+      const notification = toast.loading("Loading...");
+      const credentials = EmailAuthProvider.credential(
+        user?.email,
+        currentPassword
+      );
+
+      await reauthenticateWithCredential(user, credentials)
+        .then(() => {
+          updatePassword(user, newPassword)
+            .then(() => {
+              toast.success("Password updated successfuly!", {
+                id: notification,
+              });
+            })
+            .catch((error: any) => {
+              toast.error("Error", {
+                id: notification,
+              });
+              console.error("Error: ", error);
+            });
+        })
+        .catch((error: any) => {
+          toast.error("Error", {
+            id: notification,
+          });
+          console.error("Error: ", error);
+        });
+    }
+  };
+
   useEffect(() => {
     setAvatarUrl(userData?.avatarUrl || "");
     setFirstName(userData?.firstName || "");
@@ -118,9 +159,9 @@ function Page(): JSX.Element {
   }, [userData]);
 
   return (
-    <div className={styles.slot_mar + " mt-5 h-screen"}>
-      <div className="pl-5 pr-5">
-      <Toaster position="top-right" />
+    <div className="pt-16 h-screen">
+      <div className="pl-5 pr-5 pt-5 pb-5">
+        <Toaster position="top-right" />
         <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-4xl dark:text-white">
           Profile
         </h1>
@@ -265,6 +306,68 @@ function Page(): JSX.Element {
                 Save
               </button>
             </div>
+            <p className="mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400">
+              Password
+            </p>
+            <form className="max-w-lg">
+              <div className="mb-5">
+                <label
+                  htmlFor="current-password-input"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Current password
+                </label>
+                <input
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  type="password"
+                  id="current-password-input"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                />
+              </div>
+              <div className="mb-5">
+                <label
+                  htmlFor="new-password-input"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  New password
+                </label>
+                <input
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  type="password"
+                  id="new-password-input"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                />
+              </div>
+              <div className="mb-5">
+                <label
+                  htmlFor="confirm-password-input"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Confirm password
+                </label>
+                <input
+                  value={confirmNewPassword}
+                  onChange={(e) => setConfirmNewPassword(e.target.value)}
+                  type="password"
+                  id="confirm-password-input"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                />
+              </div>
+            </form>
+            <button
+              onClick={saveNewPassword}
+              disabled={
+                !currentPassword ||
+                !newPassword ||
+                !confirmNewPassword ||
+                newPassword !== confirmNewPassword
+              }
+              className="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:hover:bg-purple-700 dark:focus:ring-purple-900 disabled:opacity-50 disabled:cursor-not-allowed mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
+            >
+              Change password
+            </button>
           </div>
         </div>
       </div>

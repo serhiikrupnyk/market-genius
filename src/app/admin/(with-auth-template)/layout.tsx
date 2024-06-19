@@ -64,8 +64,8 @@ export default function AuthLayout({
 
   return (
     <div className="h-screen overflow-hidden">
-      <div className="sticky">
-        <div className="flex h-14 items-center justify-between pl-5 pr-5 shadow-lg shadow-indigo-500/50">
+      <div className="bg-white border-b border-gray-200 fixed z-30 w-full">
+        <div className="flex h-14 items-center justify-between pl-5 pr-5 shadow-lg shadow-indigo-200/50">
           <p className="font-semibold flex justify-center">
             <img
               className="w-8 h-8 mr-2"
@@ -142,14 +142,12 @@ export default function AuthLayout({
         </div>
       </div>
       <div className="flex">
-        <aside
-          id="default-sidebar"
-          className="h-screen w-[300px] items-center shadow-xl shadow-indigo-500/100"
+        <aside id="sidebar" className="fixed hidden z-20 h-full top-0 left-0 flex lg:flex flex-shrink-0 flex-col w-64 transition-width duration-75" aria-label="Sidebar"
         >
-          <div className="flex h-screen flex-col pt-7">
-            <div className="flex h-full grow flex-col px-5 pb-8">
-              <div className="mb-10 flex flex-col gap-10">
-                <nav className="flex flex-col gap-1 list-none">
+          <div className="relative flex-1 flex flex-col min-h-0 border-r border-gray-200 bg-white pt-0">
+            <div className="flex-1 flex flex-col pt-16 pb-4 overflow-y-auto">
+              <div className="flex-1 px-3 bg-white pt-5 divide-y space-y-1">
+                <ul className="space-y-2 pb-2">
                   <li>
                     <Link
                       href="/admin/dashboard"
@@ -176,12 +174,12 @@ export default function AuthLayout({
                       <span className="ms-3">Dashboard</span>
                     </Link>
                   </li>
-                </nav>
+                </ul>
               </div>
             </div>
           </div>
         </aside>
-        <div className="w-full">{children}</div>
+        <div  id="main-content" className="h-full w-full bg-gray-50 relative overflow-y-auto lg:ml-64"><main>{children}</main></div>
       </div>
     </div>
   );
